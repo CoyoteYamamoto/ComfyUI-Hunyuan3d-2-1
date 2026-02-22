@@ -111,7 +111,7 @@ def export_to_trimesh(mesh_output):
         mesh_output = trimesh.Trimesh(mesh_output.mesh_v, mesh_output.mesh_f)
         return mesh_output
 
-
+'''
 def get_obj_from_str(string, reload=False):
     module, cls = string.rsplit(".", 1)
     if reload:
@@ -121,6 +121,22 @@ def get_obj_from_str(string, reload=False):
         obj = getattr(importlib.import_module(module, package=os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))), cls)
     except:
         obj = getattr(importlib.import_module(module, package=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath( __file__ ))))), cls)
+    return obj
+'''
+def get_obj_from_str(string, reload=False):
+    module, cls = string.rsplit(".", 1)
+    if reload:
+        module_imp = importlib.import_module(module)
+        importlib.reload(module_imp)
+    try:
+        from pathlib import Path
+        base_path = Path(os.path.dirname(os.path.abspath(__file__)))
+        relative_path = Path('../..')
+        package_name = (base_path / relative_path).resolve()
+        obj = getattr(importlib.import_module(module, package=package_name), cls)
+    except:
+        package_name = '.'.join(__package__.split('.')[:-2])
+        obj = getattr(importlib.import_module(module, package=package_name), cls)
     return obj
 
 
